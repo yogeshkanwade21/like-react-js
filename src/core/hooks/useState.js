@@ -1,15 +1,11 @@
-import { render } from '../render.js';
-
 let _state = [];
 let _stateIndex = 0;
 
-const rerender = () => {
-  _stateIndex = 0;
-  import('../../App.jsx').then(({ App }) => {
-    const root = document.getElementById("app");
-    render(App(), root);
-  });
-};
+let globalRerenderFunction = null;
+
+export function setGlobalRerenderFunction(rerenderFunction) {
+  globalRerenderFunction = rerenderFunction;
+}
 
 export function useState(initialValue) {
   const currentIndex = _stateIndex;
@@ -22,9 +18,13 @@ export function useState(initialValue) {
 
   function setState(newValue) {
     _state[currentIndex] = newValue;
-    rerender();
+    globalRerenderFunction && globalRerenderFunction();
   }
 
   _stateIndex++;
   return [value, setState];
+}
+
+export function resetStateIndex() {
+  _stateIndex = 0;
 }
