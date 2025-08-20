@@ -1,30 +1,23 @@
-import { render } from '../render.js';
-
-let _state = [];
-let _stateIndex = 0;
-
-const rerender = () => {
-  _stateIndex = 0;
-  import('../../App.jsx').then(({ App }) => {
-    const root = document.getElementById("app");
-    render(App(), root);
-  });
-};
+import { getCurrentInstance } from "../instanceManager";
 
 export function useState(initialValue) {
-  const currentIndex = _stateIndex;
+    console.log('in useState get curr ins')
 
-  if (_state[currentIndex] === undefined) {
-    _state[currentIndex] = initialValue;
+  const currentInstance = getCurrentInstance();
+  const state = currentInstance.state;
+  const currentIndex = currentInstance.stateIndex;
+
+  if (state[currentIndex] === undefined) {
+    state[currentIndex] = initialValue;
   }
 
-  const value = _state[currentIndex];
+  const value = state[currentIndex];
 
   function setState(newValue) {
-    _state[currentIndex] = newValue;
-    rerender();
+    state[currentIndex] = newValue;
+    currentInstance?.rerenderFunction();
   }
 
-  _stateIndex++;
+  currentInstance.stateIndex++;
   return [value, setState];
 }

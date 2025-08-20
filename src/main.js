@@ -3,4 +3,5 @@ import { render } from './core/render';
 import { App } from './App';
 
 const root = document.getElementById("app");
-render(App(), root);
+console.log('in main.js')
+render(App, root);
