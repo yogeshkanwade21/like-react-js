@@ -1,4 +1,5 @@
 import { createInstance, resetInstance, setCurrentInstance } from "./instanceManager";
+import createDomElement from "./createDomElement";
 
 export function render(componentFunction, container) {
   console.log('in render.js - 1')
@@ -11,7 +12,11 @@ export function render(componentFunction, container) {
     resetInstance(instance);
     console.log('did set curr ins')
     setCurrentInstance(instance);
-    const component = componentFunction();
+    // to get vnode
+    const vnode = componentFunction();
+    console.log('got vnode', vnode)
+    // then give this as input to createDomElement
+    const component = createDomElement(vnode);
     console.log('built component', component)
 
     container.innerHTML = '';

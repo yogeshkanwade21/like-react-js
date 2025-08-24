@@ -1,4 +1,4 @@
-import { createElement } from "./core/createElement";
+import { h } from "./core/h";
 import { useState } from "./core/hooks/useState";
 
 export const App = () => {
@@ -6,7 +6,7 @@ export const App = () => {
     const [count, setCount] = useState(0);
     const [text, setText] = useState("Hello");
 
-    const title = createElement(
+    const title = h(
         'h1',
         {onClick: () => {
             text === 'Hello' ? setText("World") : setText("Hello")
@@ -15,8 +15,9 @@ export const App = () => {
     );
 
     // const button = createElement('button', {}, `Count`)
-    const button = createElement('button', {onClick: () => setCount(count + 1)}, `Count ${count}`)
+    const button = h('button', {onClick: () => setCount(count + 1)}, `Count ${count}`)
 
-    return createElement('div', {}, title, button)
+    // return h('div', {}, title, button)
     // return createElement('div', {}, button)
+    return button;
 }
