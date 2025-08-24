@@ -1,4 +1,4 @@
-export function h(type, props = {}, ...children) {
+export default function h(type, props = {}, ...children) {
   return {
     type,
     props,

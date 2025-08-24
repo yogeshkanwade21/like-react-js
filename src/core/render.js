@@ -1,7 +1,7 @@
 import { createInstance, resetInstance, setCurrentInstance } from "./instanceManager";
 import createDomElement from "./createDomElement";
 
-export function render(componentFunction, container) {
+export default function render(componentFunction, container) {
   console.log('in render.js - 1')
 
   const instance = createInstance(componentFunction);
