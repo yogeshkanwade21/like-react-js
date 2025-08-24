@@ -1,7 +1,7 @@
 import { getCurrentInstance } from "../instanceManager";
 
 export function useState(initialValue) {
-    console.log('in useState get curr ins')
+  console.log('in useState get curr ins')
 
   const currentInstance = getCurrentInstance();
   const state = currentInstance.state;

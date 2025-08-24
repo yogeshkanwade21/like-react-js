@@ -14,8 +14,8 @@ export function getCurrentInstance() {
 }
 
 export function createInstance(componentFunction) {
-console.log('in createInstance')
-console.log('in createInstance - componentFunction', componentFunction)
+    console.log('in createInstance')
+    console.log('in createInstance - componentFunction', componentFunction)
 
     const instance = {
         componentFunction,
