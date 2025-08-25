@@ -14,7 +14,14 @@ export function useState(initialValue) {
   const value = state[currentIndex];
 
   function setState(newValue) {
-    state[currentIndex] = newValue;
+    let derivedNewValue;
+    if (typeof newValue === 'function') {
+      const previousValue = state[currentIndex];
+      derivedNewValue = newValue(previousValue);
+    } else {
+      derivedNewValue = newValue;
+    }
+    state[currentIndex] = derivedNewValue;
     currentInstance?.rerenderFunction();
   }
 
