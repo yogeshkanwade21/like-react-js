@@ -1,35 +1,37 @@
 /** @jsx h */
 import { h, useState } from "../../src/public-api";
-
 import Counter from "./components/Counter";
+import TodoInput from "./components/Input";
+import TodoList from "./components/TodoList";
 
 const App = () => {
-    console.log('running/ building app')
-    const [count, setCount] = useState(0);
-    // const [count1, setCount1] = useState(0);
-    // const [text, setText] = useState("Hello");
+  const [todoList, setTodoList] = useState([
+    { id: 1, title: "Task 1", status: "done", priority: "medium" },
+    { id: 2, title: "Task 2", status: "pending", priority: "low" },
+    { id: 3, title: "Task 3", status: "cancelled", priority: "medium" },
+  ]);
 
-    // const title = h(
-    //     'h1',
-    //     {onClick: () => {
-    //         text === 'Hello' ? setText("World") : setText("Hello")
-    //     }},
-    //     text
-    // );
+  const addTodo = (todoInput) => {
+    const newTodo = {
+      id: todoList.length + 1,
+      title: todoInput,
+      status: todoInput === "1" ? "pending" : "done",
+      priority: "low",
+    };
+    setTodoList((prevTodoList) => [...prevTodoList, newTodo]);
+  };
 
-    // const button = h('button', {onClick: () => setCount(count + 1)}, `Count ${count}`);
-    // const button1 = h('button', {onClick: () => setCount1(count1 + 1)}, `Count ${count1}`);
-    // const div = h('div', {}, button, button1, title);
-
-    return (
-      <div>
-      
-        <Counter />
-        <Counter />
-      </div>
-    )
-    // return <button onClick={() => setCount(count + 1)}>Count {count}</button>
-    
+  return (
+    <div>
+      <h1>My Todo App</h1>
+      <TodoInput
+        addTodo={addTodo}
+      />
+      <TodoList
+        todoList={todoList}
+      />
+    </div>
+  )    
     
 }
 
