@@ -1,28 +1,61 @@
 export default function createDomElement(vnode) {
-    const { type, props, children } = vnode;
-
+    
     if (typeof vnode === 'string' || typeof vnode === 'number') {
         return document.createTextNode(vnode);
     }
-
+    
     if (typeof vnode === 'object' && vnode !== null) {
+        const { type, props = {}, children = [] } = vnode;
+
+        if (typeof type === 'function') {
+            const componentVnode = type(props || {});
+            return createDomElement(componentVnode);
+        }
 
         const el = document.createElement(type);
 
+        // for props
         for (const [key, value] of Object.entries(props || {})) {
+            // event handlers
             if (key.startsWith('on') && typeof value === 'function') {
                 const event = key.slice(2).toLowerCase();
                 el.addEventListener(event, value);
             }
+            // value of controlled inputs
+            else if (key === 'value' && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA')) {
+                el.value = value;
+            }
+            // Handle boolean attributes like 'disabled'
+            // A disabled button should be disabled when the value is a truthy value.
+            else if (typeof value === 'boolean') {
+                if (value) {
+                    el.setAttribute(key, '');
+                } else {
+                    el.removeAttribute(key);
+                }
+            }
+            // handle className (utility classes)
+            else if (key === 'className') {
+                el.setAttribute('class', value);
+            }
+            // set other standard attributes
+            else {
+                el.setAttribute(key, value);
+            }
         }
 
+        // for children
         children.flat().forEach((child) => {
             if (typeof child.type === 'string') {
-                const childElement = createDomElement(child);
-                childElement && el.appendChild(childElement);
+                const childDomNode = createDomElement(child);
+                childDomNode instanceof Node && el.appendChild(childDomNode);
+            } else if (typeof child.type === 'function') {
+                const childVnode = child.type(child.props || {});
+                const childDomNode = createDomElement(childVnode);
+                childDomNode instanceof Node && el.appendChild(childDomNode);
             } else if (typeof child === 'string' || typeof child === 'number') {
                 const textNode = document.createTextNode(child);
-                textNode && el.appendChild(textNode);
+                textNode instanceof Node && el.appendChild(textNode);
             }
         });
 
