@@ -1,6 +1,8 @@
 export default function createDomElement(vnode) {
     
     if (typeof vnode === 'string' || typeof vnode === 'number') {
+            console.log('createDomElement - string/number vnode')
+
         return document.createTextNode(vnode);
     }
     
@@ -8,11 +10,14 @@ export default function createDomElement(vnode) {
         const { type, props = {}, children = [] } = vnode;
 
         if (typeof type === 'function') {
+            console.log('createDomElement - function vnode')
             const componentVnode = type(props || {});
             return createDomElement(componentVnode);
         }
 
         const el = document.createElement(type);
+        console.log('createDomElement - el created of type', type)
+
 
         // for props
         for (const [key, value] of Object.entries(props || {})) {
@@ -50,10 +55,15 @@ export default function createDomElement(vnode) {
                 const childDomNode = createDomElement(child);
                 childDomNode instanceof Node && el.appendChild(childDomNode);
             } else if (typeof child.type === 'function') {
+                console.log('function child')
                 const childVnode = child.type(child.props || {});
+                console.log('childVnode during handling functional children', childVnode)
+
                 const childDomNode = createDomElement(childVnode);
                 childDomNode instanceof Node && el.appendChild(childDomNode);
             } else if (typeof child === 'string' || typeof child === 'number') {
+                console.log('createDomElement - string/number child appended',)
+                
                 const textNode = document.createTextNode(child);
                 textNode instanceof Node && el.appendChild(textNode);
             }

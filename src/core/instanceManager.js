@@ -13,19 +13,23 @@ export function getCurrentInstance() {
     return currentInstance;
 }
 
-export function createInstance(componentFunction) {
+export function createInstance(vnode) {
     console.log('in createInstance')
-    console.log('in createInstance - componentFunction', componentFunction)
+    console.log('in createInstance - vnode', vnode)
 
-    const instance = {
-        componentFunction,
-        state: [],
-        stateIndex: 0,
-        rerenderFunction: null,
-    };
-
-    instances.set(componentFunction, instance);
-    console.log('instances', instances)
+    let instance = instances.get(vnode);
+    if (!instance) {
+        // If no instance exists, create one and initialize its state.
+        instance = {
+            vnode,
+            componentFunction: vnode.type,
+            state: [],
+            stateIndex: 0,
+            rerenderFunction: null,
+        };
+        instances.set(vnode, instance);
+    }
+    // console.log('instance initial set during create', JSON.parse(JSON.stringify(instance.state)))
     return instance;
 }
 
