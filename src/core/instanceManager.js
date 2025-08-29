@@ -16,17 +16,21 @@ export function getCurrentInstance() {
 export function createInstance(componentFunction) {
     console.log('in createInstance')
     console.log('in createInstance - componentFunction', componentFunction)
+    if (instances.has(componentFunction)) {
+        return instances.get(componentFunction);
+    } else {
+        const instance = {
+            componentFunction,
+            state: [],
+            stateIndex: 0,
+            rerenderFunction: null,
+            dom: null
+        };
 
-    const instance = {
-        componentFunction,
-        state: [],
-        stateIndex: 0,
-        rerenderFunction: null,
-    };
-
-    instances.set(componentFunction, instance);
-    console.log('instances', instances)
-    return instance;
+        instances.set(componentFunction, instance);
+        console.log('instances', instances)
+        return instance;
+    }
 }
 
 export function getInstance(componentFunction) {

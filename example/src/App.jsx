@@ -30,6 +30,8 @@ const App = () => {
       <TodoList
         todoList={todoList}
       />
+      <Counter />
+      <Counter />
     </div>
   )    
     
