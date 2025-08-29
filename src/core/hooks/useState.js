@@ -14,6 +14,12 @@ export function useState(initialValue) {
   const value = state[currentIndex];
 
   function setState(newValue) {
+    
+    console.log('useState call - newValue', newValue)
+    console.log('useState call - state freeze', JSON.parse(JSON.stringify(state)))
+    console.log('useState call - state live', state)
+    console.log('useState call - currentIndex live', currentIndex)
+    console.log('useState call - currentIndex dead', JSON.parse(JSON.stringify(currentIndex)))
     let derivedNewValue;
     if (typeof newValue === 'function') {
       const previousValue = state[currentIndex];
@@ -25,6 +31,7 @@ export function useState(initialValue) {
     currentInstance?.rerenderFunction();
   }
 
+  console.log('returning value', value, currentIndex)
   currentInstance.stateIndex++;
   return [value, setState];
 }

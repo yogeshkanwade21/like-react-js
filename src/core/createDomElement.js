@@ -1,3 +1,5 @@
+import { createInstance, resetInstance, setCurrentInstance } from "./instanceManager";
+
 export default function createDomElement(vnode) {
     console.log('ye mera vnode', vnode)
 
@@ -6,12 +8,31 @@ export default function createDomElement(vnode) {
         console.log('text node created', vnode)
         return document.createTextNode(vnode);
     }
-       
+
     // functional component
     if (typeof vnode.type === 'function') {
         console.log('typeof vnode === function')
-        const componentVNode = vnode.type(vnode.props);
-        return createDomElement(componentVNode);
+        const instance = createInstance(vnode.type);
+        function rerenderFunction() {
+            resetInstance(instance);
+            setCurrentInstance(instance);
+            const componentVNode = instance.componentFunction(vnode.props);
+            const domNode = createDomElement(componentVNode);
+
+            // Update the UI by replacing the old DOM node with the new one
+            instance.dom.replaceWith(domNode);
+            
+            // Update the instance's reference to point to the new DOM node
+            instance.dom = domNode;
+        }
+
+        instance.rerenderFunction = rerenderFunction;
+
+        setCurrentInstance(instance);
+        const componentVNode = instance.componentFunction(vnode.props);
+        const domNode = createDomElement(componentVNode);
+        instance.dom = domNode;
+        return domNode;
     }
 
     // HTML elements
