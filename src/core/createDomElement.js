@@ -1,21 +1,26 @@
 export default function createDomElement(vnode) {
-    
+    console.log('ye mera vnode', vnode)
+
+    // vnode itself is a string/number
     if (typeof vnode === 'string' || typeof vnode === 'number') {
+        console.log('text node created', vnode)
         return document.createTextNode(vnode);
     }
-    
-    if (typeof vnode === 'object' && vnode !== null) {
-        const { type, props = {}, children = [] } = vnode;
+       
+    // functional component
+    if (typeof vnode.type === 'function') {
+        console.log('typeof vnode === function')
+        const componentVNode = vnode.type(vnode.props);
+        return createDomElement(componentVNode);
+    }
 
-        if (typeof type === 'function') {
-            const componentVnode = type(props || {});
-            return createDomElement(componentVnode);
-        }
-
-        const el = document.createElement(type);
+    // HTML elements
+    if (typeof vnode.type === 'string') {
+        console.log('HTML element of type', vnode.type)
+        const el = document.createElement(vnode.type);
 
         // for props
-        for (const [key, value] of Object.entries(props || {})) {
+        for (const [key, value] of Object.entries(vnode.props || {})) {
             // event handlers
             if (key.startsWith('on') && typeof value === 'function') {
                 const event = key.slice(2).toLowerCase();
@@ -45,20 +50,13 @@ export default function createDomElement(vnode) {
         }
 
         // for children
-        children.flat().forEach((child) => {
-            if (typeof child.type === 'string') {
-                const childDomNode = createDomElement(child);
-                childDomNode instanceof Node && el.appendChild(childDomNode);
-            } else if (typeof child.type === 'function') {
-                const childVnode = child.type(child.props || {});
-                const childDomNode = createDomElement(childVnode);
-                childDomNode instanceof Node && el.appendChild(childDomNode);
-            } else if (typeof child === 'string' || typeof child === 'number') {
-                const textNode = document.createTextNode(child);
-                textNode instanceof Node && el.appendChild(textNode);
+        vnode.children.flat().forEach((child) => {
+            const childDom = createDomElement(child);
+            if (childDom) {
+                el.appendChild(childDom);
             }
         });
 
         return el;
-    }
+    }   
 }
