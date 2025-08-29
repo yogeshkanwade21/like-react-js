@@ -3,32 +3,34 @@ import createDomElement from "./createDomElement";
 import h from './h';
 
 export default function render(componentFunction, container) {
-  console.log('in render.js - 1')
 
-  const instance = createInstance(componentFunction);
+  // Create the initial VNode for the root component
+  const rootVNode = h(componentFunction);
+  console.log('got rootVNode', rootVNode)
+  // Create a unique instance for the root component
+  const instance = createInstance(rootVNode);
+
   const rerenderFunction = () => {
-    console.log('in render -> rerenderFunction')
-    console.log('in render -> raw componentFunction', componentFunction)
-
     resetInstance(instance);
-    console.log('did set curr ins')
     setCurrentInstance(instance);
-
-    // to get root vnode
-    const vnode = h(componentFunction);
-    console.log('got vnode', vnode)
     
+    const vnode = instance.componentFunction(rootVNode.props);
     // then give this as input to createDomElement
-    const component = createDomElement(vnode);
-    console.log('built component', component)
+    const dom = createDomElement(vnode);
+    console.log('built dom', dom)
 
-    container.innerHTML = '';
-    container.appendChild(component);
-    instance.rerenderFunction = rerenderFunction;
+    if (instance.dom) {
+      instance.dom.replaceWith(dom);
+    } else {
+      container.innerHTML = '';
+      container.appendChild(dom);
+    }
+    instance.dom = dom;
   };
 
-  console.log('before calling rerenderFunction')
+  instance.rerenderFunction = rerenderFunction;
 
+  console.log('before calling rerenderFunction')
   rerenderFunction();
   console.log('after calling rerenderFunction')
 }

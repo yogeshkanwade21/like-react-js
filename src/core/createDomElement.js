@@ -12,7 +12,7 @@ export default function createDomElement(vnode) {
     // functional component
     if (typeof vnode.type === 'function') {
         console.log('typeof vnode === function')
-        const instance = createInstance(vnode.type);
+        const instance = createInstance(vnode);
         function rerenderFunction() {
             resetInstance(instance);
             setCurrentInstance(instance);
