@@ -2,26 +2,18 @@
 import { h, useState } from "../../../src/public-api";
 
 const Counter = () => {
-  const [count, setCount] = useState(0);
-  const [count1, setCount1] = useState(0);
+  const [count, setCount] = useState(true);
+  // const [count1, setCount1] = useState(0);
 
   return (
     <div>
       <button
         onClick={() => {
           console.log("closure sees count =", count);
-          setCount(count + 1)}
+          setCount(count => !count)}
         }
       >
-        {count}
-      </button>
-      <button
-        onClick={() => {
-          console.log("closure sees count1 =", count1);
-          setCount1(count1 + 1)}
-        }
-      >
-        {count1}
+        {count ? 'true' : 'false'}
       </button>
     </div>
   )
