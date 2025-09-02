@@ -1,37 +1,37 @@
 import { createInstance, resetInstance, setCurrentInstance } from "./instanceManager";
+import patch from "./patch";
 
 export default function createDomElement(vnode) {
     console.log('ye mera vnode', vnode)
 
     // vnode itself is a string/number
     if (typeof vnode === 'string' || typeof vnode === 'number') {
-        console.log('text node created', vnode)
-        return document.createTextNode(vnode);
+        const textNode = document.createTextNode(vnode);
+        return textNode;
     }
 
     // functional component
     if (typeof vnode.type === 'function') {
         console.log('typeof vnode === function')
         const instance = createInstance(vnode);
+        let oldVNode;
+
         function rerenderFunction() {
             resetInstance(instance);
             setCurrentInstance(instance);
             const componentVNode = instance.componentFunction(vnode.props);
-            const domNode = createDomElement(componentVNode);
-
-            // Update the UI by replacing the old DOM node with the new one
-            instance.dom.replaceWith(domNode);
-            
-            // Update the instance's reference to point to the new DOM node
-            instance.dom = domNode;
+            patch(oldVNode, componentVNode);
         }
 
         instance.rerenderFunction = rerenderFunction;
-
         setCurrentInstance(instance);
+        
         const componentVNode = instance.componentFunction(vnode.props);
+        
         const domNode = createDomElement(componentVNode);
+        oldVNode = componentVNode;
         instance.dom = domNode;
+
         return domNode;
     }
 
@@ -39,6 +39,7 @@ export default function createDomElement(vnode) {
     if (typeof vnode.type === 'string') {
         console.log('HTML element of type', vnode.type)
         const el = document.createElement(vnode.type);
+        vnode.dom = el;
 
         // for props
         for (const [key, value] of Object.entries(vnode.props || {})) {
